@@ -39,6 +39,18 @@ const postsSlice = createSlice({
       state.posts.item = [];
       state.posts.status = 'error';
     },
+    [fetchTags.pending]: (state) => {
+      state.tags.item = [];
+      state.tags.status = 'loading';
+    },
+    [fetchTags.fulfilled]: (state, action) => {
+      state.tags.item = action.payload;
+      state.tags.status = 'loaded';
+    },
+    [fetchTags.rejected]: (state) => {
+      state.tags.item = [];
+      state.tags.status = 'error';
+    },
   },
 });
 
