@@ -18,7 +18,6 @@ export const Login = () => {
   const {
     register,
     handleSubmit,
-    setError,
     formState: { errors, isValid },
   } = useForm({
     defaultValues: {
@@ -62,7 +61,13 @@ export const Login = () => {
           label='Пароль'
           fullWidth
         />
-        <Button type='submit' size='large' variant='contained' fullWidth>
+        <Button
+          disabled={!isValid}
+          type='submit'
+          size='large'
+          variant='contained'
+          fullWidth
+        >
           Войти
         </Button>
       </form>
