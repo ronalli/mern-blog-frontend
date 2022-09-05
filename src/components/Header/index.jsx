@@ -11,8 +11,12 @@ export const Header = () => {
   const dispatch = useDispatch();
   const isAuth = useSelector(selectIsAuth);
 
-  const onClickLogout = () => dispatch(logout());
-
+  const onClickLogout = () => {
+    if (window.confirm('Вы действительно хотите выйти?')) {
+      dispatch(logout());
+      window.localStorage.removeItem('token');
+    }
+  };
   return (
     <div className={styles.root}>
       <Container maxWidth='lg'>
