@@ -11,6 +11,7 @@ import { fetchPosts, fetchTags } from '../redux/posts/posts';
 
 export const Home = () => {
   const dispatch = useDispatch();
+  const dataUser = useSelector((state) => state.auth.data);
   const { posts, tags } = useSelector((state) => state.posts);
   const isPostsLoading = posts.status === 'loading';
   const isTagsLoading = tags.status === 'loading';
@@ -19,6 +20,8 @@ export const Home = () => {
     dispatch(fetchPosts());
     dispatch(fetchTags());
   }, []);
+
+  console.log(dataUser);
 
   return (
     <>
@@ -47,7 +50,7 @@ export const Home = () => {
                 viewsCount={obj.viewsCount}
                 commentsCount={0}
                 tags={obj.tags}
-                isEditable
+                isEditable={dataUser?._id === obj.user._id}
               />
             )
           )}
