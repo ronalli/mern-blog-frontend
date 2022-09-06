@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, Link, useNavigate } from 'react-router-dom';
 
 import TextField from '@mui/material/TextField';
 import Paper from '@mui/material/Paper';
@@ -13,12 +13,13 @@ import { selectIsAuth } from '../../redux/auth/auth';
 import axios from '../../utils/axios';
 
 export const AddPost = () => {
+  const navigate = useNavigate();
   const isAuth = useSelector(selectIsAuth);
   const inputFileRef = useRef(null);
 
   const [imageUrl, setImageUrl] = useState();
 
-  const [value, setValue] = useState();
+  const [text, setText] = useState();
   const [title, setTitle] = useState();
   const [tags, setTags] = useState();
 
@@ -35,11 +36,31 @@ export const AddPost = () => {
     }
   };
 
-  const onClickRemoveImage = () => {};
+  const onClickRemoveImage = () => {
+    setImageUrl(null);
+  };
 
   const onChange = React.useCallback((value) => {
-    setValue(value);
+    setText(value);
   }, []);
+
+  const onSubmit = async () => {
+    try {
+      const fields = {
+        title,
+        tags: tags.split(','),
+        text,
+        imageUrl,
+      };
+
+      const { data } = await axios.post('/posts', fields);
+      const id = data._id;
+      navigate(`/posts/${id}`);
+    } catch (error) {
+      console.warn(error);
+      alert('Ошибка при создании статьи!!');
+    }
+  };
 
   const options = React.useMemo(
     () => ({
@@ -106,17 +127,17 @@ export const AddPost = () => {
       />
       <SimpleMDE
         className={styles.editor}
-        value={value}
+        value={text}
         onChange={onChange}
         options={options}
       />
       <div className={styles.buttons}>
-        <Button size='large' variant='contained'>
+        <Button size='large' variant='contained' onClick={onSubmit}>
           Опубликовать
         </Button>
-        <a href='/'>
+        <Link to='/'>
           <Button size='large'>Отмена</Button>
-        </a>
+        </Link>
       </div>
     </Paper>
   );

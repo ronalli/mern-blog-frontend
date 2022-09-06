@@ -21,7 +21,7 @@ export const Home = () => {
     dispatch(fetchTags());
   }, []);
 
-  console.log(dataUser);
+  console.log(posts);
 
   return (
     <>
