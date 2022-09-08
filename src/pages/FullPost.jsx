@@ -13,6 +13,7 @@ export const FullPost = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { id } = useParams();
 
+
   useEffect(() => {
     axios
       .get(`/posts/${id}`)

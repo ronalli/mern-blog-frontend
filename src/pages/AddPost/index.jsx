@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Navigate, Link, useNavigate } from 'react-router-dom';
+import { Navigate, Link, useNavigate, useParams } from 'react-router-dom';
 
 import TextField from '@mui/material/TextField';
 import Paper from '@mui/material/Paper';
@@ -11,8 +11,11 @@ import styles from './AddPost.module.scss';
 import { useSelector } from 'react-redux';
 import { selectIsAuth } from '../../redux/auth/auth';
 import axios from '../../utils/axios';
+import { useEffect } from 'react';
 
 export const AddPost = () => {
+  const { id } = useParams();
+  const isEdit = Boolean(id);
   const navigate = useNavigate();
   const isAuth = useSelector(selectIsAuth);
   const inputFileRef = useRef(null);
@@ -22,6 +25,20 @@ export const AddPost = () => {
   const [text, setText] = useState();
   const [title, setTitle] = useState();
   const [tags, setTags] = useState();
+
+  useEffect(() => {
+    if (id) {
+      axios
+        .get(`/posts/${id}`)
+        .then(({ data }) => {
+          setText(data.text);
+          setTitle(data.title);
+          setTags(data.tags.join(','));
+          setImageUrl(data.imageUrl);
+        })
+        .catch((error) => console.log(error));
+    }
+  }, []);
 
   const handleChangeFile = async (e) => {
     try {
@@ -53,9 +70,11 @@ export const AddPost = () => {
         imageUrl,
       };
 
-      const { data } = await axios.post('/posts', fields);
-      const id = data._id;
-      navigate(`/posts/${id}`);
+      const { data } = isEdit
+        ? await axios.patch(`/posts/${id}`, fields)
+        : await axios.post('/posts', fields);
+      const _id = isEdit ? id : data._id;
+      navigate(`/posts/${_id}`);
     } catch (error) {
       console.warn(error);
       alert('Ошибка при создании статьи!!');
@@ -133,7 +152,7 @@ export const AddPost = () => {
       />
       <div className={styles.buttons}>
         <Button size='large' variant='contained' onClick={onSubmit}>
-          Опубликовать
+          {isEdit ? 'Обновить' : 'Опубликовать'}
         </Button>
         <Link to='/'>
           <Button size='large'>Отмена</Button>
