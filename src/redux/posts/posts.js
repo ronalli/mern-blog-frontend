@@ -24,6 +24,13 @@ export const fetchPostsByTag = createAsyncThunk(
   }
 );
 
+export const fetchAddComment = createAsyncThunk(
+  'posts/fetchAddComment',
+  async (values) => {
+    const { data } = axios.patch(`/posts/${values.postId}/add-comment`, values);
+  }
+);
+
 const initialState = {
   posts: {
     item: [],

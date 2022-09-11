@@ -1,18 +1,19 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Post } from '../components/Post';
 import { Index } from '../components/AddComment';
 import { CommentsBlock } from '../components/CommentsBlock';
 import { useParams } from 'react-router-dom';
-import { useState } from 'react';
 import axios from '../utils/axios';
 import ReactMarkdown from 'react-markdown';
+import { useSelector } from 'react-redux';
+import { selectIsAuth } from '../redux/auth/auth';
 
 export const FullPost = () => {
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const { id } = useParams();
-
+  const isAuth = useSelector(selectIsAuth);
 
   useEffect(() => {
     axios
@@ -64,7 +65,7 @@ export const FullPost = () => {
         ]}
         isLoading={false}
       >
-        <Index />
+        {isAuth ? <Index /> : ''}
       </CommentsBlock>
     </>
   );
