@@ -7,9 +7,17 @@ import { Post } from '../components/Post';
 import { TagsBlock } from '../components/TagsBlock';
 import { CommentsBlock } from '../components/CommentsBlock';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchPosts, fetchTags, sortPosts } from '../redux/posts/posts';
+import {
+  fetchPosts,
+  fetchPostsByTag,
+  fetchTags,
+  sortPosts,
+} from '../redux/posts/posts';
+import { useNavigate, useParams } from 'react-router-dom';
 
 export const Home = () => {
+  const { name } = useParams();
+  const navigate = useNavigate();
   const [value, setValue] = useState(0);
   const dispatch = useDispatch();
   const dataUser = useSelector((state) => state.auth.data);
@@ -20,14 +28,26 @@ export const Home = () => {
   useEffect(() => {
     dispatch(fetchPosts());
     dispatch(fetchTags());
+    //eslint-disable-next-line
   }, []);
 
   const filterPosts = (e) => {
     const selectedFilter = e.target.dataset.value;
     setValue(Number(selectedFilter));
-    console.log(selectedFilter);
-    selectedFilter === '0' ? dispatch(fetchPosts()) : dispatch(sortPosts());
+    if (selectedFilter === '0') {
+      dispatch(fetchPosts());
+      navigate('/');
+    } else {
+      dispatch(sortPosts());
+    }
   };
+
+  useEffect(() => {
+    if (name) {
+      dispatch(fetchPostsByTag(name));
+    }
+    //eslint-disable-next-line
+  }, [name]);
 
   return (
     <>
