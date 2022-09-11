@@ -30,7 +30,13 @@ const initialState = {
 const postsSlice = createSlice({
   name: 'posts',
   initialState,
-  reducers: {},
+  reducers: {
+    sortPosts: (state) => {
+      state.posts.item = state.posts.item.sort(
+        (a, b) => b.viewsCount - a.viewsCount
+      );
+    },
+  },
   extraReducers: {
     [fetchPosts.pending]: (state) => {
       state.posts.item = [];
@@ -63,5 +69,7 @@ const postsSlice = createSlice({
     },
   },
 });
+
+export const { sortPosts } = postsSlice.actions;
 
 export const postsReducer = postsSlice.reducer;

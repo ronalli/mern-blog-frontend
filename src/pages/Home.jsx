@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Grid from '@mui/material/Grid';
@@ -7,9 +7,10 @@ import { Post } from '../components/Post';
 import { TagsBlock } from '../components/TagsBlock';
 import { CommentsBlock } from '../components/CommentsBlock';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchPosts, fetchTags } from '../redux/posts/posts';
+import { fetchPosts, fetchTags, sortPosts } from '../redux/posts/posts';
 
 export const Home = () => {
+  const [value, setValue] = useState(0);
   const dispatch = useDispatch();
   const dataUser = useSelector((state) => state.auth.data);
   const { posts, tags } = useSelector((state) => state.posts);
@@ -21,15 +22,23 @@ export const Home = () => {
     dispatch(fetchTags());
   }, []);
 
+  const filterPosts = (e) => {
+    const selectedFilter = e.target.dataset.value;
+    setValue(Number(selectedFilter));
+    console.log(selectedFilter);
+    selectedFilter === '0' ? dispatch(fetchPosts()) : dispatch(sortPosts());
+  };
+
   return (
     <>
       <Tabs
         style={{ marginBottom: 15 }}
-        value={0}
+        value={value}
         aria-label='basic tabs example'
+        onClick={filterPosts}
       >
-        <Tab label='Новые' />
-        <Tab label='Популярные' />
+        <Tab label='Новые' data-value={0} />
+        <Tab label='Популярные' data-value={1} />
       </Tabs>
       <Grid container spacing={4}>
         <Grid xs={8} item>
