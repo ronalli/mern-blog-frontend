@@ -28,6 +28,7 @@ export const fetchAddComment = createAsyncThunk(
   'posts/fetchAddComment',
   async (values) => {
     const { data } = axios.patch(`/posts/${values.postId}/add-comment`, values);
+    return data;
   }
 );
 
@@ -40,6 +41,7 @@ const initialState = {
     item: [],
     status: 'loading',
   },
+  isLoadindComments: 'loading',
 };
 
 const postsSlice = createSlice({
@@ -90,9 +92,20 @@ const postsSlice = createSlice({
       state.posts.item = action.payload;
       state.posts.status = 'loaded';
     },
+    [fetchAddComment.pending]: (state) => {
+      state.isLoadindComments = 'loading';
+    },
+    [fetchAddComment.fulfilled]: (state, action) => {
+      state.isLoadindComments = 'loaded';
+    },
+    [fetchAddComment.rejected]: (state, action) => {
+      state.isLoadindComments = 'error';
+    },
   },
 });
 
 export const { sortPosts } = postsSlice.actions;
+
+export const selectIsLoadingComments = (state) => state.posts.isLoadindComments;
 
 export const postsReducer = postsSlice.reducer;

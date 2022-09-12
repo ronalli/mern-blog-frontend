@@ -26,8 +26,6 @@ export const Index = () => {
     };
     dispatch(fetchAddComment(data, id));
     setValue('');
-    // console.log('value', value);
-    // console.log('user', user);
   };
 
   return (

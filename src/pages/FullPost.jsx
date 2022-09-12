@@ -8,9 +8,11 @@ import axios from '../utils/axios';
 import ReactMarkdown from 'react-markdown';
 import { useSelector } from 'react-redux';
 import { selectIsAuth } from '../redux/auth/auth';
+import { selectIsLoadingComments } from '../redux/posts/posts';
 
 export const FullPost = () => {
   const [data, setData] = useState(null);
+  const isLoadindComments = useSelector(selectIsLoadingComments);
   const [isLoading, setIsLoading] = useState(true);
   const { id } = useParams();
   const isAuth = useSelector(selectIsAuth);
@@ -26,7 +28,22 @@ export const FullPost = () => {
         alert('Ошибка при получении статьи');
       })
       .finally(() => setIsLoading(false));
+    // eslint-disable-next-line
   }, []);
+
+  useEffect(() => {
+    axios
+      .get(`/posts/${id}`)
+      .then((res) => {
+        setData(res.data);
+      })
+      .catch((err) => {
+        console.warn(err);
+        alert('Ошибка при получении статьи');
+      })
+      .finally(() => setIsLoading(false));
+    // eslint-disable-next-line
+  }, [isLoadindComments]);
 
   if (isLoading) {
     return <Post isLoading={isLoading} />;
@@ -40,31 +57,13 @@ export const FullPost = () => {
         user={data.user}
         createdAt={data.createdAt}
         viewsCount={data.viewsCount}
-        commentsCount={3}
+        commentsCount={data.comments?.length || 0}
         tags={data.tags}
         isFullPost
       >
         <ReactMarkdown children={data.text} />
       </Post>
-      <CommentsBlock
-        items={[
-          {
-            user: {
-              fullName: 'Вася Пупкин',
-              avatarUrl: 'https://mui.com/static/images/avatar/1.jpg',
-            },
-            text: 'Это тестовый комментарий 555555',
-          },
-          {
-            user: {
-              fullName: 'Иван Иванов',
-              avatarUrl: 'https://mui.com/static/images/avatar/2.jpg',
-            },
-            text: 'When displaying three lines or more, the avatar is not aligned at the top. You should set the prop to align the avatar at the top',
-          },
-        ]}
-        isLoading={false}
-      >
+      <CommentsBlock items={data.comments} isLoading={false}>
         {isAuth ? <Index /> : ''}
       </CommentsBlock>
     </>
