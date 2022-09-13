@@ -24,12 +24,27 @@ export const Home = () => {
   const { posts, tags } = useSelector((state) => state.posts);
   const isPostsLoading = posts.status === 'loading';
   const isTagsLoading = tags.status === 'loading';
+  let comments = [];
 
   useEffect(() => {
     dispatch(fetchPosts());
     dispatch(fetchTags());
     //eslint-disable-next-line
   }, []);
+
+  useEffect(() => {
+    if (name) {
+      dispatch(fetchPostsByTag(name));
+    }
+    //eslint-disable-next-line
+  }, [name]);
+
+  if (posts.item.length) {
+    comments = posts.item
+      .map((obj) => obj.comments)
+      .flat()
+      .slice(0, 5);
+  }
 
   const filterPosts = (e) => {
     const selectedFilter = e.target.dataset.value;
@@ -41,15 +56,6 @@ export const Home = () => {
       dispatch(sortPosts());
     }
   };
-
-  console.log(posts);
-
-  useEffect(() => {
-    if (name) {
-      dispatch(fetchPostsByTag(name));
-    }
-    //eslint-disable-next-line
-  }, [name]);
 
   return (
     <>
@@ -86,25 +92,7 @@ export const Home = () => {
         </Grid>
         <Grid xs={4} item>
           <TagsBlock items={tags.item} isLoading={isTagsLoading} />
-          <CommentsBlock
-            items={[
-              {
-                user: {
-                  fullName: 'Вася Пупкин',
-                  avatarUrl: 'https://mui.com/static/images/avatar/1.jpg',
-                },
-                text: 'Это тестовый комментарий',
-              },
-              {
-                user: {
-                  fullName: 'Иван Иванов',
-                  avatarUrl: 'https://mui.com/static/images/avatar/2.jpg',
-                },
-                text: 'When displaying three lines or more, the avatar is not aligned at the top. You should set the prop to align the avatar at the top',
-              },
-            ]}
-            isLoading={false}
-          />
+          <CommentsBlock items={comments} isLoading={isPostsLoading} />
         </Grid>
       </Grid>
     </>

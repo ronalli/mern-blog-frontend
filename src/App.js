@@ -1,17 +1,18 @@
 import Container from '@mui/material/Container';
 import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Routes, Route } from 'react-router-dom';
 
 import { Header } from './components';
 import { Home, FullPost, Registration, AddPost, Login } from './pages';
-import { fetchAuthMe, selectIsAuth } from './redux/auth/auth';
+import { fetchAuthMe } from './redux/auth/auth';
 
 function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(fetchAuthMe());
+    // eslint-disable-next-line
   }, []);
 
   return (

@@ -38,6 +38,7 @@ export const AddPost = () => {
         })
         .catch((error) => console.log(error));
     }
+    // eslint-disable-next-line
   }, []);
 
   const handleChangeFile = async (e) => {
